@@ -25,10 +25,16 @@ CHI TIẾT ĐẦU SÁCH
 
                 <div class="col-md-9">
                     <h3 class="fw-bold">{{ $book->title }}</h3>
-                    <p class="text-muted mb-2">{{ $book->authors->pluck('name')->join(', ') ?: 'Chưa rõ tác giả' }}</p>
+                    <p class="text-muted mb-2">
+                        @forelse ($book->authors as $author)
+                            <a href="{{ route('authors.show', $author) }}" class="link-secondary">{{ $author->name }}</a>@if (! $loop->last), @endif
+                        @empty
+                            Chưa rõ tác giả
+                        @endforelse
+                    </p>
                     <div class="mb-3">
                         @foreach ($book->categories as $category)
-                            <span class="badge bg-primary-subtle text-primary-emphasis">{{ $category->name }}</span>
+                            <a href="{{ route('categories.show', $category) }}" class="badge bg-primary-subtle text-primary-emphasis text-decoration-none">{{ $category->name }}</a>
                         @endforeach
                     </div>
 
@@ -38,7 +44,13 @@ CHI TIẾT ĐẦU SÁCH
                         <tr><th class="pe-4">Số lượng tồn</th>
                             <td>@include('books.partials.stock-badge')</td></tr>
                         <tr><th class="pe-4">ISBN</th><td>{{ $book->isbn ?? '—' }}</td></tr>
-                        <tr><th class="pe-4">Nhà xuất bản</th><td>{{ $book->publisher?->name ?? '—' }}</td></tr>
+                        <tr><th class="pe-4">Nhà xuất bản</th><td>
+                            @if ($book->publisher)
+                                <a href="{{ route('publishers.show', $book->publisher) }}">{{ $book->publisher->name }}</a>
+                            @else
+                                —
+                            @endif
+                        </td></tr>
                         <tr><th class="pe-4">Năm xuất bản</th><td>{{ $book->published_year ?? '—' }}</td></tr>
                         <tr><th class="pe-4">Số trang</th><td>{{ $book->page_count ?? '—' }}</td></tr>
                         <tr><th class="pe-4">Kích thước</th><td>{{ $book->dimensions ?? '—' }}</td></tr>

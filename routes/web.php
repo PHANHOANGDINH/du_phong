@@ -1,9 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookExportController;
 use App\Http\Controllers\BookTrashController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PublisherController;
 
 Route::get('/', function () {
     return redirect()->route('books.index');
@@ -19,3 +22,8 @@ Route::get('/books/export/excel', [BookExportController::class, 'exportExcel'])-
 
 // Sách: CRUD đầy đủ
 Route::resource('books', BookController::class);
+
+// Danh mục phụ: chỉ xem (danh sách + chi tiết kèm các sách liên quan)
+Route::resource('categories', CategoryController::class)->only(['index', 'show']);
+Route::resource('authors', AuthorController::class)->only(['index', 'show']);
+Route::resource('publishers', PublisherController::class)->only(['index', 'show']);

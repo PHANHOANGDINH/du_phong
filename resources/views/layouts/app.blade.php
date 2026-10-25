@@ -18,6 +18,9 @@
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link @if(request()->routeIs('books.*') && ! request()->routeIs('books.trash')) active @endif" href="{{ route('books.index') }}">Sách</a></li>
+                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('categories.*')) active @endif" href="{{ route('categories.index') }}">Thể loại</a></li>
+                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('authors.*')) active @endif" href="{{ route('authors.index') }}">Tác giả</a></li>
+                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('publishers.*')) active @endif" href="{{ route('publishers.index') }}">Nhà xuất bản</a></li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link @if(request()->routeIs('books.trash')) active @endif" href="{{ route('books.trash') }}"><i class="bi bi-trash3"></i> Thùng rác</a></li>

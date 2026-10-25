@@ -19,6 +19,9 @@
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link @if(request()->routeIs('books.*') && ! request()->routeIs('books.trash')) active @endif" href="{{ route('books.index') }}">Sách</a></li>
                 </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('books.trash')) active @endif" href="{{ route('books.trash') }}"><i class="bi bi-trash3"></i> Thùng rác</a></li>
+                </ul>
             </div>
         </div>
     </nav>

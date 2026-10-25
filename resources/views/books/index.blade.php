@@ -11,6 +11,8 @@
         </div>
     </div>
 
+    @include('books.partials.filter-bar')
+
     <p class="text-muted small mb-2">Tìm thấy <strong>{{ $books->total() }}</strong> đầu sách.</p>
 
     <div class="card border-0 shadow-sm">

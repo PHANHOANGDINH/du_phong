@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookFilterRequest;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Author;
@@ -20,13 +21,16 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(BookFilterRequest $request): View
     {
-        $books = Book::with(['publisher', 'authors', 'categories'])
-            ->orderByDesc('id')
-            ->paginate(10);
+        $filters = $request->filters();
 
-        return view('books.index', compact('books'));
+        $books = Book::with(['publisher', 'authors', 'categories'])
+            ->filter($filters)
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('books.index', $this->formOptions() + compact('books', 'filters'));
     }
 
     /**

@@ -39,4 +39,26 @@ class BookModelTest extends TestCase
         $this->assertSame(0, Book::count());
         $this->assertSame(1, Book::withTrashed()->count());
     }
+
+    public function test_sample_seeder_adds_20_books_without_duplicates(): void
+    {
+        $this->seed();
+        $authorsBefore = \App\Models\Author::count();
+
+        $this->seed(\Database\Seeders\SampleBookSeeder::class);
+        Book::firstWhere('title', 'Mắt Biếc')->delete();
+        $this->seed(\Database\Seeders\SampleBookSeeder::class); // chạy lại: không trùng, khôi phục sách lỡ xóa
+
+        $this->assertSame(78, Book::count());
+        $this->assertSame(0, Book::onlyTrashed()->count());
+
+        $book = Book::firstWhere('title', 'Mắt Biếc');
+        $this->assertSame(['Nguyễn Nhật Ánh'], $book->authors->pluck('name')->all());
+        $this->assertSame(['Văn Học'], $book->categories->pluck('name')->all());
+        $this->assertSame('NXB Trẻ', $book->publisher->name);
+
+        // Tô Hoài, Gosho Aoyama... đã có sẵn thì dùng lại, không tạo trùng
+        $this->assertSame(1, \App\Models\Author::where('name', 'Tô Hoài')->count());
+        $this->assertLessThan(20, \App\Models\Author::count() - $authorsBefore);
+    }
 }

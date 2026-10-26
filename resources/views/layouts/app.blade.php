@@ -76,10 +76,14 @@
         .tile { display: block; padding: 18px; color: inherit; text-decoration: none; height: 100%; }
         .tile:hover { border-color: #c7cbd1; }
 
-        /* Dải sách liên quan */
-        /* Khung chọn trong form (tác giả, thể loại): cùng chiều cao, danh sách bên trong cuộn khi dài */
-        .pick-box { height: 340px; display: flex; flex-direction: column; }
-        .pick-box .pick-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 4px; }
+        /* Accordion chọn tác giả / thể loại trong form sách */
+        .pick-accordion .accordion-button { gap: 10px; padding: .75rem 1rem; color: #222; }
+        .pick-accordion .accordion-button:not(.collapsed) { background: #fff; color: #222; box-shadow: none; }
+        .pick-accordion .accordion-button:focus { box-shadow: none; }
+        .pick-accordion .pick-label { font-weight: 600; white-space: nowrap; }
+        .pick-accordion .pick-summary { font-size: .85rem; color: #6b7280; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+        .pick-accordion .accordion-body { padding-top: 0; }
+        .pick-accordion .form-check { font-size: .9rem; margin-bottom: 4px; }
     </style>
 </head>
 <body>
@@ -131,6 +135,17 @@
                 row.style.display = row.dataset.name.includes(keyword) ? '' : 'none';
             });
         }
+
+        // Accordion chọn trong form: tick / bỏ tick thì cập nhật số lượng và tên đã chọn trên tiêu đề
+        document.addEventListener('change', (event) => {
+            const list = event.target.closest('[data-pick]');
+            if (! list) return;
+
+            const key = list.dataset.pick;
+            const names = [...list.querySelectorAll('input:checked')].map((input) => input.nextElementSibling.textContent.trim());
+            document.querySelector(`[data-pick-count="${key}"]`).textContent = names.length;
+            document.querySelector(`[data-pick-summary="${key}"]`).textContent = names.length ? names.join(', ') : 'Chưa chọn';
+        });
     </script>
 </body>
 </html>

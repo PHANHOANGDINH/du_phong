@@ -5,6 +5,14 @@ Biến: $book, $publishers, $authors, $categories
 @php
     $selectedAuthors = old('author_ids', $book->authors?->pluck('id')->all() ?? []);
     $selectedCategories = old('category_ids', $book->categories?->pluck('id')->all() ?? []);
+
+    // Accordion tác giả / thể loại: tên đã chọn hiện trên tiêu đề; mở sẵn khi chưa chọn gì hoặc đang có lỗi
+    $authorNames = $authors->whereIn('id', $selectedAuthors)->pluck('name');
+    $categoryNames = $categories->whereIn('id', $selectedCategories)->pluck('name');
+    $authorError = $errors->has('author_ids') || $errors->has('author_ids.*');
+    $categoryError = $errors->has('category_ids') || $errors->has('category_ids.*');
+    $openAuthors = $authorNames->isEmpty() || $authorError;
+    $openCategories = $categoryNames->isEmpty() || $categoryError;
 @endphp
 
 @if ($errors->any())
@@ -72,37 +80,62 @@ Biến: $book, $publishers, $authors, $categories
         @error('dimensions') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
 
-    <div class="col-md-6">
-        <label class="form-label">Tác giả <span class="text-danger">*</span> <span class="text-muted small">(chọn nhiều)</span></label>
-        <div class="border rounded p-2 pick-box @error('author_ids') border-danger @enderror @error('author_ids.*') border-danger @enderror">
-            <input type="search" class="form-control form-control-sm mb-2" placeholder="Tìm tác giả..." oninput="filterChecklist(this, 'form-author-list')" aria-label="Tìm tác giả">
-            <div class="pick-list" id="form-author-list">
-                {{-- Tác giả đã chọn đưa lên đầu --}}
-                @foreach ($authors->sortBy(fn ($a) => in_array($a->id, $selectedAuthors) ? 0 : 1, SORT_REGULAR) as $author)
-                    <div class="form-check" data-name="{{ mb_strtolower($author->name) }}">
-                        <input class="form-check-input" type="checkbox" name="author_ids[]" value="{{ $author->id }}"
-                               id="author{{ $author->id }}" @checked(in_array($author->id, $selectedAuthors))>
-                        <label class="form-check-label" for="author{{ $author->id }}">{{ $author->name }}</label>
+    <div class="col-12">
+        <div class="accordion pick-accordion">
+            {{-- Tác giả (chọn nhiều) --}}
+            <div @class(['accordion-item', 'border-danger' => $authorError])>
+                <h2 class="accordion-header">
+                    <button type="button" @class(['accordion-button', 'collapsed' => ! $openAuthors])
+                            data-bs-toggle="collapse" data-bs-target="#pick-authors" aria-expanded="{{ $openAuthors ? 'true' : 'false' }}">
+                        <span class="pick-label">Tác giả <span class="text-danger">*</span></span>
+                        <span class="badge rounded-pill text-bg-secondary" data-pick-count="authors">{{ $authorNames->count() }}</span>
+                        <span class="pick-summary" data-pick-summary="authors">{{ $authorNames->join(', ') ?: 'Chưa chọn' }}</span>
+                    </button>
+                </h2>
+                <div id="pick-authors" @class(['accordion-collapse collapse', 'show' => $openAuthors])>
+                    <div class="accordion-body">
+                        <input type="search" class="form-control form-control-sm mb-2" placeholder="Tìm tác giả..." oninput="filterChecklist(this, 'form-author-list')" aria-label="Tìm tác giả">
+                        <div class="filter-scroll row row-cols-1 row-cols-md-3 g-0" id="form-author-list" data-pick="authors">
+                            {{-- Tác giả đã chọn đưa lên đầu --}}
+                            @foreach ($authors->sortBy(fn ($a) => in_array($a->id, $selectedAuthors) ? 0 : 1, SORT_REGULAR) as $author)
+                                <div class="col form-check" data-name="{{ mb_strtolower($author->name) }}">
+                                    <input class="form-check-input" type="checkbox" name="author_ids[]" value="{{ $author->id }}"
+                                           id="author{{ $author->id }}" @checked(in_array($author->id, $selectedAuthors))>
+                                    <label class="form-check-label" for="author{{ $author->id }}">{{ $author->name }}</label>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                @endforeach
+                </div>
+            </div>
+
+            {{-- Thể loại (chọn nhiều) --}}
+            <div @class(['accordion-item', 'border-danger' => $categoryError])>
+                <h2 class="accordion-header">
+                    <button type="button" @class(['accordion-button', 'collapsed' => ! $openCategories])
+                            data-bs-toggle="collapse" data-bs-target="#pick-categories" aria-expanded="{{ $openCategories ? 'true' : 'false' }}">
+                        <span class="pick-label">Thể loại <span class="text-danger">*</span></span>
+                        <span class="badge rounded-pill text-bg-secondary" data-pick-count="categories">{{ $categoryNames->count() }}</span>
+                        <span class="pick-summary" data-pick-summary="categories">{{ $categoryNames->join(', ') ?: 'Chưa chọn' }}</span>
+                    </button>
+                </h2>
+                <div id="pick-categories" @class(['accordion-collapse collapse', 'show' => $openCategories])>
+                    <div class="accordion-body">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-0" data-pick="categories">
+                            @foreach ($categories as $category)
+                                <div class="col form-check">
+                                    <input class="form-check-input" type="checkbox" name="category_ids[]" value="{{ $category->id }}"
+                                           id="cat{{ $category->id }}" @checked(in_array($category->id, $selectedCategories))>
+                                    <label class="form-check-label" for="cat{{ $category->id }}">{{ $category->name }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         @error('author_ids') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
         @error('author_ids.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">Thể loại <span class="text-danger">*</span> <span class="text-muted small">(chọn nhiều)</span></label>
-        <div class="border rounded p-2 pick-box @error('category_ids') border-danger @enderror @error('category_ids.*') border-danger @enderror">
-            <div class="pick-list">
-                @foreach ($categories as $category)
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="category_ids[]" value="{{ $category->id }}"
-                               id="cat{{ $category->id }}" @checked(in_array($category->id, $selectedCategories))>
-                        <label class="form-check-label" for="cat{{ $category->id }}">{{ $category->name }}</label>
-                    </div>
-                @endforeach
-            </div>
-        </div>
         @error('category_ids') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
         @error('category_ids.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
     </div>

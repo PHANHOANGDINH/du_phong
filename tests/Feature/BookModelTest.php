@@ -61,4 +61,21 @@ class BookModelTest extends TestCase
         $this->assertSame(1, \App\Models\Author::where('name', 'Tô Hoài')->count());
         $this->assertLessThan(20, \App\Models\Author::count() - $authorsBefore);
     }
+
+    public function test_diverse_seeder_adds_multilingual_multi_author_books(): void
+    {
+        $this->seed();
+        $this->seed(\Database\Seeders\DiverseBookSeeder::class);
+        $this->seed(\Database\Seeders\DiverseBookSeeder::class); // chạy lại không trùng
+
+        $this->assertSame(88, Book::count());
+        $this->assertSame(12, \App\Models\Category::count());
+
+        $gof = Book::firstWhere('title', 'like', 'Design Patterns%');
+        $this->assertCount(4, $gof->authors);
+
+        foreach (['ノルウェイの森', '三体', '채식주의자', 'Война и мир', "L'Étranger"] as $title) {
+            $this->get(route('books.index', ['q' => $title]))->assertOk()->assertSee(e($title), false);
+        }
+    }
 }

@@ -16,12 +16,15 @@ use Illuminate\Support\Facades\DB;
  */
 class SampleBookSeeder extends Seeder
 {
+    /** Phần đầu của mã ISBN giả, nối thêm số thứ tự 3 chữ số. */
+    protected const ISBN_PREFIX = '8935000000';
+
     public function run(): void
     {
         DB::transaction(function () {
             foreach ($this->books() as $i => $item) {
                 $book = Book::withTrashed()->updateOrCreate(
-                    ['isbn' => sprintf('8935000000%03d', $i + 1)],
+                    ['isbn' => sprintf('%s%03d', static::ISBN_PREFIX, $i + 1)],
                     [
                         'title' => $item['title'],
                         'published_year' => $item['year'],
@@ -42,15 +45,20 @@ class SampleBookSeeder extends Seeder
                 $book->authors()->sync(
                     collect($item['authors'])->map(fn ($name) => Author::firstOrCreate(['name' => $name])->id)
                 );
-                $book->categories()->sync([Category::firstOrCreate(['name' => $item['category']])->id]);
+                $book->categories()->sync(
+                    collect((array) ($item['categories'] ?? $item['category']))
+                        ->map(fn ($name) => Category::firstOrCreate(['name' => $name])->id)
+                );
             }
         });
     }
 
     /**
+     * Mỗi sách: title, authors[], category (hoặc categories[]), publisher, year, price, stock, pages, size, description.
+     *
      * @return array<int, array<string, mixed>>
      */
-    private function books(): array
+    protected function books(): array
     {
         return [
             ['title' => 'Dế Mèn Phiêu Lưu Ký', 'authors' => ['Tô Hoài'], 'category' => 'Thiếu Nhi', 'publisher' => 'NXB Kim Đồng', 'year' => 2023, 'price' => 45000, 'stock' => 35, 'pages' => 144, 'size' => '13 x 20.5 cm',

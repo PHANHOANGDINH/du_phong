@@ -133,7 +133,7 @@ Nhận $filters, $categories, $authors, $publishers
             </h2>
             <div id="filter-stock" @class(['accordion-collapse collapse', 'show' => $open['stock']])>
                 <div class="accordion-body">
-                    @foreach (['' => 'Tất cả', 'in' => 'Còn hàng', 'low' => 'Sắp hết (dưới '.\App\Models\Book::LOW_STOCK.')', 'out' => 'Hết hàng'] as $value => $label)
+                    @foreach (['' => 'Tất cả', 'in' => 'Còn hàng', 'low' => 'Sắp hết', 'out' => 'Hết hàng'] as $value => $label)
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="stock" value="{{ $value }}" id="stock-{{ $value ?: 'all' }}"
                                    @checked(($filters['stock'] ?? '') === $value)>

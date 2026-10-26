@@ -21,7 +21,7 @@ Biến: $book, $publishers, $authors, $categories
 
 <div class="row g-3">
     <div class="col-md-8">
-        <label class="form-label">Tên sách <span class="text-danger">*</span></label>
+        <label class="form-label">Tên sách</label>
         <input type="text" name="title" value="{{ old('title', $book->title) }}"
                class="form-control @error('title') is-invalid @enderror" maxlength="255" required>
         @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -39,13 +39,13 @@ Biến: $book, $publishers, $authors, $categories
     </div>
 
     <div class="col-md-4">
-        <label class="form-label">Giá bán (₫) <span class="text-danger">*</span></label>
+        <label class="form-label">Giá bán</label>
         <input type="number" name="price" value="{{ old('price', (float) ($book->price ?? 0)) }}" min="0" step="100"
                class="form-control @error('price') is-invalid @enderror" required>
         @error('price') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-4">
-        <label class="form-label">Số lượng tồn <span class="text-danger">*</span></label>
+        <label class="form-label">Số lượng tồn</label>
         <input type="number" name="stock_quantity" value="{{ old('stock_quantity', $book->stock_quantity ?? 0) }}" min="0"
                class="form-control @error('stock_quantity') is-invalid @enderror" required>
         @error('stock_quantity') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -75,7 +75,7 @@ Biến: $book, $publishers, $authors, $categories
     </div>
     <div class="col-md-4">
         <label class="form-label">Kích thước</label>
-        <input type="text" name="dimensions" value="{{ old('dimensions', $book->dimensions) }}" maxlength="50" placeholder="VD: 13 x 20.5 cm"
+        <input type="text" name="dimensions" value="{{ old('dimensions', $book->dimensions) }}" maxlength="50"
                class="form-control @error('dimensions') is-invalid @enderror">
         @error('dimensions') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
@@ -87,7 +87,7 @@ Biến: $book, $publishers, $authors, $categories
                 <h2 class="accordion-header">
                     <button type="button" @class(['accordion-button', 'collapsed' => ! $openAuthors])
                             data-bs-toggle="collapse" data-bs-target="#pick-authors" aria-expanded="{{ $openAuthors ? 'true' : 'false' }}">
-                        <span class="pick-label">Tác giả <span class="text-danger">*</span></span>
+                        <span class="pick-label">Tác giả</span>
                         <span class="badge rounded-pill text-bg-secondary" data-pick-count="authors">{{ $authorNames->count() }}</span>
                         <span class="pick-summary" data-pick-summary="authors">{{ $authorNames->join(', ') ?: 'Chưa chọn' }}</span>
                     </button>
@@ -114,7 +114,7 @@ Biến: $book, $publishers, $authors, $categories
                 <h2 class="accordion-header">
                     <button type="button" @class(['accordion-button', 'collapsed' => ! $openCategories])
                             data-bs-toggle="collapse" data-bs-target="#pick-categories" aria-expanded="{{ $openCategories ? 'true' : 'false' }}">
-                        <span class="pick-label">Thể loại <span class="text-danger">*</span></span>
+                        <span class="pick-label">Thể loại</span>
                         <span class="badge rounded-pill text-bg-secondary" data-pick-count="categories">{{ $categoryNames->count() }}</span>
                         <span class="pick-summary" data-pick-summary="categories">{{ $categoryNames->join(', ') ?: 'Chưa chọn' }}</span>
                     </button>
@@ -144,7 +144,6 @@ Biến: $book, $publishers, $authors, $categories
         <label class="form-label">Ảnh bìa</label>
         <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp"
                class="form-control @error('cover_image') is-invalid @enderror">
-        <div class="form-text">JPG, PNG hoặc WEBP, tối đa 2MB.@if ($book->cover_url) Chọn ảnh mới sẽ thay thế ảnh hiện tại.@endif</div>
         @error('cover_image') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-6">

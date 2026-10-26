@@ -3,11 +3,10 @@
 @section('title', 'Thùng rác - Sách đã xóa')
 
 @section('content')
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-1">
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
     <h1 class="page-title"><i class="bi bi-trash3"></i> Thùng rác</h1>
     <a href="{{ route('books.index') }}" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Về danh mục sách</a>
 </div>
-<p class="small text-muted mb-3">Sách đã xóa vẫn được lưu trong CSDL. Có thể khôi phục, hoặc xóa vĩnh viễn (không thể hoàn tác).</p>
 
 <div class="shop-box overflow-hidden simple-list">
     @forelse ($books as $book)

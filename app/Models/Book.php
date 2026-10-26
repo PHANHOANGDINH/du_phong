@@ -82,8 +82,9 @@ class Book extends Model
                     ->where('title', 'like', "%{$keyword}%")
                     ->orWhere('isbn', 'like', "%{$keyword}%"));
             })
-            ->when($filters['category_id'] ?? null, fn (Builder $q, $id) => $q->whereHas('categories', fn (Builder $c) => $c->whereKey($id)))
-            ->when($filters['author_id'] ?? null, fn (Builder $q, $id) => $q->whereHas('authors', fn (Builder $a) => $a->whereKey($id)))
+            // Chọn nhiều thể loại / tác giả: sách thuộc bất kỳ mục nào đã chọn
+            ->when($filters['category_id'] ?? null, fn (Builder $q, $ids) => $q->whereHas('categories', fn (Builder $c) => $c->whereKey((array) $ids)))
+            ->when($filters['author_id'] ?? null, fn (Builder $q, $ids) => $q->whereHas('authors', fn (Builder $a) => $a->whereKey((array) $ids)))
             ->when($filters['publisher_id'] ?? null, fn (Builder $q, $id) => $q->where('publisher_id', $id))
             ->when(isset($filters['price_min']), fn (Builder $q) => $q->where('price', '>=', $filters['price_min']))
             ->when(isset($filters['price_max']), fn (Builder $q) => $q->where('price', '<=', $filters['price_max']))

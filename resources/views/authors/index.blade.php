@@ -2,10 +2,10 @@
 @section('title', 'Tác giả')
 
 @section('content')
-<div class="container pb-4">
-    <h3 class="fw-bold text-primary mb-3">TÁC GIẢ</h3>
+<div>
+    <h1 class="page-title mb-3">Tác giả</h1>
 
-    <div class="card border-0 shadow-sm">
+    <div class="shop-box overflow-hidden">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">

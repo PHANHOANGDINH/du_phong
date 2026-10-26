@@ -9,86 +9,88 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --shop-bg: #f0f0f0;
-            --shop-dark: #1f2d3d;      /* nút chính, mục đang chọn */
-            --shop-price: #c92127;     /* giá bán */
-            --shop-muted: #7a7e83;
-            --shop-radius: 8px;
+            --shop-bg: #f4f5f7;
+            --shop-border: #e5e7eb;
+            --shop-dark: #1f2937;     /* nút chính */
+            --shop-price: #c92127;    /* giá bán */
+            --shop-radius: 10px;
         }
         body { background: var(--shop-bg); color: #333; }
 
-        /* Header */
-        .shop-header { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-        .shop-header .navbar-brand { color: var(--shop-price); font-weight: 700; letter-spacing: .3px; }
-        .shop-header .nav-link { color: #444; font-weight: 500; }
-        .shop-header .nav-link.active, .shop-header .nav-link:hover { color: var(--shop-price); }
+        /* Nội dung canh giữa, rộng tối đa 1200px */
+        .page { max-width: 1200px; margin: 0 auto; padding: 0 16px 32px; }
 
-        /* Khối trắng bo góc */
-        .shop-box { background: #fff; border-radius: var(--shop-radius); }
+        /* Header */
+        .shop-header { background: #fff; border-bottom: 1px solid var(--shop-border); }
+        .shop-header .inner { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+        .shop-header .brand { color: var(--shop-price); font-weight: 700; font-size: 1.15rem; text-decoration: none; }
+        .shop-header .nav-link { color: #4b5563; font-weight: 500; padding: 1rem .9rem; border-bottom: 2px solid transparent; }
+        .shop-header .nav-link:hover { color: #111; }
+        .shop-header .nav-link.active { color: var(--shop-price); border-bottom-color: var(--shop-price); }
+
+        /* Khối trắng */
+        .shop-box { background: #fff; border: 1px solid var(--shop-border); border-radius: var(--shop-radius); }
+        .page-title { font-size: 1.35rem; font-weight: 700; margin: 0; }
         .btn-shop { background: var(--shop-dark); color: #fff; }
-        .btn-shop:hover { background: #111c27; color: #fff; }
+        .btn-shop:hover { background: #111827; color: #fff; }
         .text-price { color: var(--shop-price); }
 
-        /* Thẻ sách trong lưới */
-        .book-card { background: #fff; border-radius: var(--shop-radius); padding: 12px; height: 100%;
-                     display: flex; flex-direction: column; transition: box-shadow .15s, transform .15s; position: relative; }
-        .book-card:hover { box-shadow: 0 6px 18px rgba(0,0,0,.10); transform: translateY(-2px); }
-        .book-card .book-title { font-size: .875rem; color: #333; line-height: 1.35; height: 2.7em; overflow: hidden;
+        /* Thẻ sách */
+        .book-card { background: #fff; border: 1px solid var(--shop-border); border-radius: var(--shop-radius); padding: 10px;
+                     height: 100%; display: flex; flex-direction: column; position: relative; transition: border-color .15s; }
+        .book-card:hover { border-color: #c7cbd1; }
+        .book-card .book-title { font-size: .875rem; color: #222; line-height: 1.35; height: 2.7em; overflow: hidden;
                                  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin: 10px 0 6px; }
-        .book-card .book-price { color: var(--shop-price); font-weight: 700; font-size: 1.05rem; white-space: nowrap; }
-        .book-card .badge { white-space: nowrap; }
-        .book-card .card-actions { position: absolute; top: 18px; right: 18px; display: flex; gap: 4px; opacity: 0; transition: opacity .15s; }
+        .book-card .book-price { color: var(--shop-price); font-weight: 700; white-space: nowrap; }
+        .book-card .badge { white-space: nowrap; font-weight: 500; }
+        .book-card .card-actions { position: absolute; top: 16px; right: 16px; display: flex; gap: 4px; opacity: 0; transition: opacity .15s; }
         .book-card:hover .card-actions, .book-card:focus-within .card-actions { opacity: 1; }
-        .book-card .card-actions .btn { width: 30px; height: 30px; padding: 0; line-height: 28px; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+        .book-card .card-actions .btn { width: 30px; height: 30px; padding: 0; line-height: 28px; border: 1px solid var(--shop-border); }
 
-        /* Ảnh bìa / bìa tạm khi chưa có ảnh */
-        .book-cover { aspect-ratio: 3 / 4; width: 100%; border-radius: 4px; overflow: hidden; background: #f6f6f6;
+        /* Ảnh bìa / bìa tạm */
+        .book-cover { aspect-ratio: 3 / 4; width: 100%; border-radius: 6px; overflow: hidden; background: #f3f4f6;
                       display: flex; align-items: center; justify-content: center; }
         .book-cover img { width: 100%; height: 100%; object-fit: contain; }
-        .cover-placeholder { width: 100%; height: 100%; padding: 14% 12%; color: #fff; display: flex; flex-direction: column;
-                             justify-content: space-between; text-align: left; }
-        .cover-placeholder .ph-title { font-weight: 700; line-height: 1.25; font-size: clamp(.8rem, 1.4vw, 1.05rem);
+        .cover-placeholder { width: 100%; height: 100%; padding: 14% 12%; display: flex; flex-direction: column; justify-content: space-between; }
+        .cover-placeholder .ph-title { font-weight: 600; line-height: 1.3; font-size: clamp(.8rem, 1.3vw, 1rem);
                                        display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
-        .cover-placeholder .ph-author { font-size: .7rem; opacity: .85; }
+        .cover-placeholder .ph-author { font-size: .7rem; opacity: .75; }
 
-        /* Thanh lọc bên trái */
-        .filter-title { font-weight: 700; font-size: .9rem; margin-bottom: .5rem; }
-        .filter-list { list-style: none; padding: 0; margin: 0 0 1rem; }
-        .filter-list a { display: block; padding: 5px 8px; border-radius: 4px; color: #444; font-size: .875rem; text-decoration: none; }
-        .filter-list a:hover { background: #f3f4f6; }
-        .filter-list a.active { background: var(--shop-dark); color: #fff; }
-        .filter-radio a { position: relative; padding-left: 26px; }
-        .filter-radio a::before { content: ""; position: absolute; left: 8px; top: 50%; width: 12px; height: 12px; margin-top: -6px;
-                                  border: 1.5px solid #9aa0a6; border-radius: 50%; }
-        .filter-radio a.active { background: transparent; color: var(--shop-dark); font-weight: 600; }
-        .filter-radio a.active::before { border: 4px solid #2f6fdc; }
+        /* Bộ lọc */
+        .filter-group { padding: 14px 0; border-top: 1px solid var(--shop-border); }
+        .filter-group:first-of-type { border-top: 0; padding-top: 0; }
+        .filter-title { font-weight: 600; font-size: .875rem; margin-bottom: 8px; }
+        .filter-group .form-check { font-size: .875rem; margin-bottom: 4px; }
+        .filter-scroll { max-height: 220px; overflow-y: auto; padding-right: 4px; }
 
         /* Dải sách liên quan */
-        .related-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(180px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 6px; }
+        .related-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(170px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 6px; }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-md shop-header mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('books.index') }}"><i class="bi bi-book-half"></i> Nhà Sách</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('books.*') && ! request()->routeIs('books.trash')) active @endif" href="{{ route('books.index') }}">Sách</a></li>
-                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('categories.*')) active @endif" href="{{ route('categories.index') }}">Thể loại</a></li>
-                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('authors.*')) active @endif" href="{{ route('authors.index') }}">Tác giả</a></li>
-                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('publishers.*')) active @endif" href="{{ route('publishers.index') }}">Nhà xuất bản</a></li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('books.trash')) active @endif" href="{{ route('books.trash') }}"><i class="bi bi-trash3"></i> Thùng rác</a></li>
-                </ul>
-            </div>
+    @php
+        $navItems = [
+            ['books.index', 'books.*', 'Sách'],
+            ['categories.index', 'categories.*', 'Thể loại'],
+            ['authors.index', 'authors.*', 'Tác giả'],
+            ['publishers.index', 'publishers.*', 'Nhà xuất bản'],
+            ['books.trash', 'books.trash', 'Thùng rác'],
+        ];
+    @endphp
+    <header class="shop-header mb-4">
+        <div class="inner d-flex flex-wrap align-items-center justify-content-between">
+            <a class="brand py-3" href="{{ route('books.index') }}"><i class="bi bi-book-half"></i> Nhà Sách</a>
+            <nav class="nav justify-content-center flex-grow-1">
+                @foreach ($navItems as [$route, $pattern, $label])
+                    @php $active = request()->routeIs($pattern) && ($pattern !== 'books.*' || ! request()->routeIs('books.trash')); @endphp
+                    <a class="nav-link @if($active) active @endif" href="{{ route($route) }}">{{ $label }}</a>
+                @endforeach
+            </nav>
+            <span class="d-none d-md-block" style="width: 110px"></span>{{-- cân với logo để menu nằm giữa --}}
         </div>
-    </nav>
+    </header>
 
-    <div class="container">
+    <div class="page">
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">
                 <i class="bi bi-check-circle"></i> {{ session('success') }}
@@ -101,10 +103,19 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
+
+        @yield('content')
     </div>
 
-    @yield('content')
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Ô tìm nhanh trong danh sách tick (tác giả...): chỉ ẩn/hiện dòng theo chữ gõ vào, không gửi lên server
+        function filterChecklist(input, listId) {
+            const keyword = input.value.trim().toLowerCase();
+            document.querySelectorAll('#' + listId + ' .form-check').forEach((row) => {
+                row.style.display = row.dataset.name.includes(keyword) ? '' : 'none';
+            });
+        }
+    </script>
 </body>
 </html>

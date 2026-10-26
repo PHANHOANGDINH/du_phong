@@ -1,4 +1,8 @@
-{{-- Thẻ sách trong lưới: nhận $book; $actions = true để hiện nút Sửa / Xóa khi rê chuột --}}
+{{--
+Thẻ sách trong lưới: nhận $book.
+$actions = true: hiện nút Sửa / Xóa khi rê chuột. Nút Xóa gửi form "delete-book-{id}" do trang cha đặt
+ngoài form lọc (form không được lồng nhau), xem partial delete-form.
+--}}
 <div class="book-card">
     <a href="{{ route('books.show', $book) }}" class="text-decoration-none">
         @include('books.partials.cover')
@@ -12,12 +16,7 @@
     @if ($actions ?? false)
         <div class="card-actions">
             <a href="{{ route('books.edit', $book) }}" class="btn btn-light btn-sm" title="Sửa"><i class="bi bi-pencil"></i></a>
-            <form action="{{ route('books.destroy', $book) }}" method="POST"
-                  onsubmit="return confirm(@js('Chuyển sách "'.$book->title.'" vào thùng rác?'))">
-                @csrf
-                @method('DELETE')
-                <button class="btn btn-light btn-sm text-danger" title="Xóa"><i class="bi bi-trash"></i></button>
-            </form>
+            <button type="submit" form="delete-book-{{ $book->id }}" class="btn btn-light btn-sm text-danger" title="Xóa"><i class="bi bi-trash"></i></button>
         </div>
     @endif
 </div>

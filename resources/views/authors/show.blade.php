@@ -2,10 +2,10 @@
 @section('title', $author->name)
 
 @section('content')
-<div class="container pb-4">
-    <a href="{{ route('authors.index') }}" class="btn btn-link px-0 mb-2"><i class="bi bi-arrow-left"></i> Danh sách tác giả</a>
+<div>
+    <a href="{{ route('authors.index') }}" class="small text-decoration-none d-inline-block mb-2"><i class="bi bi-arrow-left"></i> Danh sách tác giả</a>
 
-    <h3 class="fw-bold mb-1">{{ $author->name }}</h3>
+    <h1 class="page-title mb-1">{{ $author->name }}</h1>
     @if ($author->biography)
         <p class="mb-2" style="white-space: pre-line">{{ $author->biography }}</p>
     @endif

@@ -32,7 +32,7 @@ Biến: $book, $publishers, $authors, $categories
 
     <div class="col-md-4">
         <label class="form-label">Giá bán (₫) <span class="text-danger">*</span></label>
-        <input type="number" name="price" value="{{ old('price', $book->price ?? 0) }}" min="0" step="100"
+        <input type="number" name="price" value="{{ old('price', (float) ($book->price ?? 0)) }}" min="0" step="100"
                class="form-control @error('price') is-invalid @enderror" required>
         @error('price') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
@@ -73,16 +73,22 @@ Biến: $book, $publishers, $authors, $categories
     </div>
 
     <div class="col-md-6">
-        <label class="form-label">Tác giả <span class="text-danger">*</span></label>
-        <select name="author_ids[]" multiple size="8"
-                class="form-select @error('author_ids') is-invalid @enderror @error('author_ids.*') is-invalid @enderror">
-            @foreach ($authors as $author)
-                <option value="{{ $author->id }}" @selected(in_array($author->id, $selectedAuthors))>{{ $author->name }}</option>
-            @endforeach
-        </select>
-        <div class="form-text">Giữ Ctrl để chọn nhiều tác giả.</div>
-        @error('author_ids') <div class="invalid-feedback">{{ $message }}</div> @enderror
-        @error('author_ids.*') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        <label class="form-label">Tác giả <span class="text-danger">*</span> <span class="text-muted small">(chọn nhiều)</span></label>
+        <div class="border rounded p-2 @error('author_ids') border-danger @enderror @error('author_ids.*') border-danger @enderror">
+            <input type="search" class="form-control form-control-sm mb-2" placeholder="Tìm tác giả..." oninput="filterChecklist(this, 'form-author-list')" aria-label="Tìm tác giả">
+            <div class="filter-scroll" id="form-author-list">
+                {{-- Tác giả đã chọn đưa lên đầu --}}
+                @foreach ($authors->sortBy(fn ($a) => in_array($a->id, $selectedAuthors) ? 0 : 1, SORT_REGULAR) as $author)
+                    <div class="form-check" data-name="{{ mb_strtolower($author->name) }}">
+                        <input class="form-check-input" type="checkbox" name="author_ids[]" value="{{ $author->id }}"
+                               id="author{{ $author->id }}" @checked(in_array($author->id, $selectedAuthors))>
+                        <label class="form-check-label" for="author{{ $author->id }}">{{ $author->name }}</label>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        @error('author_ids') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+        @error('author_ids.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-6">
         <label class="form-label">Thể loại <span class="text-danger">*</span></label>

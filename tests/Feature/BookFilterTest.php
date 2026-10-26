@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Author;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -36,16 +37,63 @@ class BookFilterTest extends TestCase
         $this->assertSame(['Mưa Đỏ', 'Nhà Giả Kim', 'Conan tập 1'], $titles(['sort' => 'price_desc']));
     }
 
-    public function test_sidebar_links_combine_with_current_filters(): void
+    public function test_filter_by_multiple_categories_and_authors(): void
     {
-        $response = $this->get(route('books.index', ['category_id' => $this->category->id, 'q' => 'abc']));
+        $kids = Category::create(['name' => 'Thiếu Nhi']);
+        $science = Category::create(['name' => 'Khoa Học']);
+        $otherAuthor = Author::create(['name' => 'Nam Cao']);
 
-        // Bấm "100k - 200k" giữ nguyên thể loại và từ khóa đang chọn
-        $response->assertSee(e(route('books.index', [
-            'q' => 'abc', 'category_id' => $this->category->id, 'price_min' => 100000, 'price_max' => 199999,
-        ])), false);
-        // Bấm "Tất cả" thể loại chỉ bỏ thể loại
-        $response->assertSee(e(route('books.index', ['q' => 'abc'])), false);
+        $a = Book::create(['title' => 'Sách văn học', 'price' => 1000]);
+        $a->categories()->attach($this->category);
+        $a->authors()->attach($this->author);
+        $b = Book::create(['title' => 'Sách thiếu nhi', 'price' => 1000]);
+        $b->categories()->attach($kids);
+        $b->authors()->attach($otherAuthor);
+        $c = Book::create(['title' => 'Sách khoa học', 'price' => 1000]);
+        $c->categories()->attach($science);
+
+        $titles = fn (array $query) => $this->get(route('books.index', $query + ['sort' => 'title']))->assertOk()
+            ->viewData('books')->pluck('title')->all();
+
+        // Nhiều thể loại: sách thuộc BẤT KỲ thể loại đã chọn
+        $this->assertSame(['Sách thiếu nhi', 'Sách văn học'], $titles(['category_id' => [$this->category->id, $kids->id]]));
+        // Nhiều tác giả
+        $this->assertSame(['Sách thiếu nhi', 'Sách văn học'], $titles(['author_id' => [$this->author->id, $otherAuthor->id]]));
+        // Kết hợp: (thể loại A hoặc B) VÀ tác giả X
+        $this->assertSame(['Sách thiếu nhi'], $titles(['category_id' => [$this->category->id, $kids->id], 'author_id' => [$otherAuthor->id]]));
+        // Link cũ dạng một giá trị vẫn chạy
+        $this->assertSame(['Sách khoa học'], $titles(['category_id' => $science->id]));
+        // Ô tick trống bị bỏ qua
+        $this->assertCount(3, $titles(['category_id' => ['']]));
+    }
+
+    public function test_filter_by_price_range_option(): void
+    {
+        Book::create(['title' => 'Rẻ', 'price' => 50000]);
+        Book::create(['title' => 'Vừa', 'price' => 150000]);
+        Book::create(['title' => 'Đắt', 'price' => 600000]);
+
+        $titles = fn (array $query) => $this->get(route('books.index', $query))->viewData('books')->pluck('title')->all();
+
+        $this->assertSame(['Rẻ'], $titles(['price_range' => 'lt100']));
+        $this->assertSame(['Vừa'], $titles(['price_range' => '100-200']));
+        $this->assertSame(['Đắt'], $titles(['price_range' => 'gt500']));
+        $this->assertCount(3, $titles(['price_range' => 'all']));
+    }
+
+    public function test_selected_filters_are_checked_and_removable(): void
+    {
+        $kids = Category::create(['name' => 'Thiếu Nhi']);
+
+        $response = $this->get(route('books.index', ['category_id' => [$this->category->id, $kids->id]]));
+
+        foreach ([$this->category->id, $kids->id] as $id) {
+            $this->assertMatchesRegularExpression('/id="cat-'.$id.'"\s+checked/', $response->getContent());
+        }
+
+        $response->assertSee('Đang lọc:')
+            // Bấm × ở "Văn Học" chỉ bỏ Văn Học, giữ Thiếu Nhi
+            ->assertSee(e(route('books.index', ['category_id' => [$kids->id]])), false);
     }
 
     public function test_filter_is_kept_in_form_and_pagination(): void

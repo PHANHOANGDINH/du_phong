@@ -3,7 +3,7 @@
 @section('title', $book->title)
 
 @section('content')
-<div class="container pb-4">
+<div>
     <nav aria-label="breadcrumb" class="small mb-2">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('books.index') }}" class="text-decoration-none">Sách</a></li>

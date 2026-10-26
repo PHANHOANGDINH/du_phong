@@ -3,15 +3,15 @@
 @section('title', 'Thùng rác - Sách đã xóa')
 
 @section('content')
-<div class="container pb-4">
+<div>
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="fw-bold text-danger mb-0"><i class="bi bi-trash3"></i> THÙNG RÁC</h3>
+        <h1 class="page-title"><i class="bi bi-trash3"></i> Thùng rác</h1>
         <a href="{{ route('books.index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Danh sách sách</a>
     </div>
 
     <p class="text-muted small">Sách đã xóa vẫn được lưu trong CSDL. Có thể khôi phục lại, hoặc xóa vĩnh viễn (không thể hoàn tác).</p>
 
-    <div class="card border-0 shadow-sm">
+    <div class="shop-box overflow-hidden">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">

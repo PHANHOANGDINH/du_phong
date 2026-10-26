@@ -1,33 +1,25 @@
+{{-- Thể loại (chỉ xem): lưới ô, bấm vào để xem sách của thể loại --}}
 @extends('layouts.app')
 @section('title', 'Thể loại')
 
 @section('content')
-<div>
-    <h1 class="page-title mb-3">Thể loại</h1>
+<h1 class="page-title mb-3">Thể loại</h1>
 
-    <div class="shop-box overflow-hidden">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th style="width: 60px">#</th>
-                    <th>Tên thể loại</th>
-                    <th class="text-center">Số sách</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($categories as $category)
-                    <tr>
-                        <td class="text-muted">{{ $category->id }}</td>
-                        <td><a href="{{ route('categories.show', $category) }}" class="fw-semibold text-decoration-none">{{ $category->name }}</a></td>
-                        <td class="text-center">{{ $category->books_count }}</td>
-                    </tr>
-                @empty
-                    <tr><td colspan="3" class="text-center text-muted py-4">Chưa có thể loại nào.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+@if ($categories->isEmpty())
+    <div class="shop-box text-center text-muted py-5">Chưa có thể loại nào.</div>
+@else
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+        @foreach ($categories as $category)
+            <div class="col">
+                <a href="{{ route('categories.show', $category) }}" class="shop-box tile">
+                    <i class="bi bi-bookmark text-price fs-5"></i>
+                    <div class="fw-semibold mt-2">{{ $category->name }}</div>
+                    <div class="small text-muted">{{ $category->books_count }} đầu sách</div>
+                </a>
+            </div>
+        @endforeach
     </div>
+@endif
 
-    <div class="mt-3">{{ $categories->links() }}</div>
-</div>
+<div class="mt-4 d-flex justify-content-center">{{ $categories->links() }}</div>
 @endsection

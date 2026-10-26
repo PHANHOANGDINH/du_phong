@@ -3,61 +3,44 @@
 @section('title', 'Thùng rác - Sách đã xóa')
 
 @section('content')
-<div>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="page-title"><i class="bi bi-trash3"></i> Thùng rác</h1>
-        <a href="{{ route('books.index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Danh sách sách</a>
-    </div>
-
-    <p class="text-muted small">Sách đã xóa vẫn được lưu trong CSDL. Có thể khôi phục lại, hoặc xóa vĩnh viễn (không thể hoàn tác).</p>
-
-    <div class="shop-box overflow-hidden">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Tên sách</th>
-                        <th>Tác giả</th>
-                        <th class="text-end">Giá bán</th>
-                        <th class="text-center">Tồn</th>
-                        <th>Ngày xóa</th>
-                        <th class="text-end" style="width: 220px">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($books as $book)
-                        <tr>
-                            <td>
-                                <span class="fw-semibold">{{ $book->title }}</span>
-                                @if ($book->isbn)
-                                    <div class="small text-muted">ISBN {{ $book->isbn }}</div>
-                                @endif
-                            </td>
-                            <td class="small">{{ $book->authors->pluck('name')->join(', ') ?: '—' }}</td>
-                            <td class="text-end text-nowrap">{{ number_format($book->price, 0, ',', '.') }} ₫</td>
-                            <td class="text-center">{{ $book->stock_quantity }}</td>
-                            <td class="small text-nowrap">{{ $book->deleted_at->format('d/m/Y H:i') }}</td>
-                            <td class="text-end text-nowrap">
-                                <form action="{{ route('books.restore', $book->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button class="btn btn-sm btn-outline-success"><i class="bi bi-arrow-counterclockwise"></i> Khôi phục</button>
-                                </form>
-                                <form action="{{ route('books.forceDelete', $book->id) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm(@js('Xóa VĨNH VIỄN sách "'.$book->title.'"? Thao tác này không thể hoàn tác.'))">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger"><i class="bi bi-x-lg"></i> Xóa vĩnh viễn</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="6" class="text-center text-muted py-4">Thùng rác trống.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="mt-3">{{ $books->links() }}</div>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-1">
+    <h1 class="page-title"><i class="bi bi-trash3"></i> Thùng rác</h1>
+    <a href="{{ route('books.index') }}" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Về danh mục sách</a>
 </div>
+<p class="small text-muted mb-3">Sách đã xóa vẫn được lưu trong CSDL. Có thể khôi phục, hoặc xóa vĩnh viễn (không thể hoàn tác).</p>
+
+<div class="shop-box overflow-hidden simple-list">
+    @forelse ($books as $book)
+        <div class="item flex-wrap">
+            <div class="flex-shrink-0 cover-sm" style="width: 44px">@include('books.partials.cover')</div>
+            <div class="flex-grow-1 min-w-0">
+                <div class="fw-semibold text-truncate">{{ $book->title }}</div>
+                <div class="meta">
+                    {{ $book->authors->pluck('name')->join(', ') ?: 'Chưa rõ tác giả' }}
+                    · {{ number_format($book->price, 0, ',', '.') }} đ
+                    · Xóa lúc {{ $book->deleted_at->format('d/m/Y H:i') }}
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <form action="{{ route('books.restore', $book->id) }}" method="POST">
+                    @csrf
+                    <button class="btn btn-sm btn-outline-success"><i class="bi bi-arrow-counterclockwise"></i> Khôi phục</button>
+                </form>
+                <form action="{{ route('books.forceDelete', $book->id) }}" method="POST"
+                      onsubmit="return confirm(@js('Xóa VĨNH VIỄN sách "'.$book->title.'"? Thao tác này không thể hoàn tác.'))">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i> Xóa vĩnh viễn</button>
+                </form>
+            </div>
+        </div>
+    @empty
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-trash3 fs-1 d-block mb-2"></i>
+            Thùng rác trống.
+        </div>
+    @endforelse
+</div>
+
+<div class="mt-4 d-flex justify-content-center">{{ $books->links() }}</div>
 @endsection

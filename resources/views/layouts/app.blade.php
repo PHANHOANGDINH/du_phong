@@ -55,13 +55,26 @@
         .cover-placeholder .ph-title { font-weight: 600; line-height: 1.3; font-size: clamp(.8rem, 1.3vw, 1rem);
                                        display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
         .cover-placeholder .ph-author { font-size: .7rem; opacity: .75; }
+        .cover-sm .cover-placeholder span { display: none; } /* bìa tạm cỡ nhỏ: chỉ giữ màu */
 
-        /* Bộ lọc */
-        .filter-group { padding: 14px 0; border-top: 1px solid var(--shop-border); }
-        .filter-group:first-of-type { border-top: 0; padding-top: 0; }
-        .filter-title { font-weight: 600; font-size: .875rem; margin-bottom: 8px; }
-        .filter-group .form-check { font-size: .875rem; margin-bottom: 4px; }
+        /* Bộ lọc dạng Accordion */
+        .filter-accordion .accordion-button { font-size: .9rem; font-weight: 600; padding: .8rem 1rem; color: #222; }
+        .filter-accordion .accordion-button:not(.collapsed) { background: #fff; color: #222; box-shadow: none; }
+        .filter-accordion .accordion-button:focus { box-shadow: none; }
+        .filter-accordion .accordion-body { padding: 0 1rem 1rem; }
+        .filter-accordion .form-check { font-size: .875rem; margin-bottom: 4px; }
         .filter-scroll { max-height: 220px; overflow-y: auto; padding-right: 4px; }
+
+        /* Danh sách đơn giản (thể loại, tác giả, NXB, thùng rác) */
+        .simple-list .item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--shop-border);
+                             color: inherit; text-decoration: none; }
+        .simple-list .item:first-child { border-top: 0; }
+        a.item:hover { background: #f9fafb; }
+        .simple-list .item .meta { font-size: .8rem; color: #6b7280; }
+        .min-w-0 { min-width: 0; } /* cho phép text-truncate hoạt động trong flex */
+        .count-pill { font-size: .75rem; background: #f3f4f6; color: #374151; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
+        .tile { display: block; padding: 18px; color: inherit; text-decoration: none; height: 100%; }
+        .tile:hover { border-color: #c7cbd1; }
 
         /* Dải sách liên quan */
         .related-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(170px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 6px; }

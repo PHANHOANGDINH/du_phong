@@ -1,37 +1,29 @@
+{{-- Tác giả (chỉ xem): danh sách đơn giản, bấm vào để xem sách của tác giả --}}
 @extends('layouts.app')
 @section('title', 'Tác giả')
 
 @section('content')
-<div>
-    <h1 class="page-title mb-3">Tác giả</h1>
+<h1 class="page-title mb-3">Tác giả</h1>
 
-    <div class="shop-box overflow-hidden">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 60px">#</th>
-                        <th>Tên tác giả</th>
-                        <th>Tiểu sử</th>
-                        <th class="text-center">Số sách</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($authors as $author)
-                        <tr>
-                            <td class="text-muted">{{ $author->id }}</td>
-                            <td><a href="{{ route('authors.show', $author) }}" class="fw-semibold text-decoration-none">{{ $author->name }}</a></td>
-                            <td class="small text-muted">{{ Str::limit($author->biography, 90) ?: '—' }}</td>
-                            <td class="text-center">{{ $author->books_count }}</td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="4" class="text-center text-muted py-4">Chưa có tác giả nào.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="mt-3">{{ $authors->links() }}</div>
+<div class="shop-box overflow-hidden simple-list">
+    @forelse ($authors as $author)
+        <a href="{{ route('authors.show', $author) }}" class="item">
+            <span class="rounded-circle bg-light border d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px">
+                <i class="bi bi-person text-secondary"></i>
+            </span>
+            <span class="flex-grow-1 min-w-0">
+                <span class="d-block fw-semibold">{{ $author->name }}</span>
+                @if ($author->biography)
+                    <span class="d-block meta text-truncate">{{ $author->biography }}</span>
+                @endif
+            </span>
+            <span class="count-pill">{{ $author->books_count }} sách</span>
+            <i class="bi bi-chevron-right text-muted"></i>
+        </a>
+    @empty
+        <div class="text-center text-muted py-5">Chưa có tác giả nào.</div>
+    @endforelse
 </div>
+
+<div class="mt-4 d-flex justify-content-center">{{ $authors->links() }}</div>
 @endsection

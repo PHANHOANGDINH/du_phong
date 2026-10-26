@@ -1,37 +1,29 @@
+{{-- Nhà xuất bản (chỉ xem): danh sách đơn giản, bấm vào để xem sách của NXB --}}
 @extends('layouts.app')
 @section('title', 'Nhà xuất bản')
 
 @section('content')
-<div>
-    <h1 class="page-title mb-3">Nhà xuất bản</h1>
+<h1 class="page-title mb-3">Nhà xuất bản</h1>
 
-    <div class="shop-box overflow-hidden">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 60px">#</th>
-                        <th>Tên nhà xuất bản</th>
-                        <th>Địa chỉ</th>
-                        <th class="text-center">Số sách</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($publishers as $publisher)
-                        <tr>
-                            <td class="text-muted">{{ $publisher->id }}</td>
-                            <td><a href="{{ route('publishers.show', $publisher) }}" class="fw-semibold text-decoration-none">{{ $publisher->name }}</a></td>
-                            <td class="small text-muted">{{ $publisher->address ?? '—' }}</td>
-                            <td class="text-center">{{ $publisher->books_count }}</td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="4" class="text-center text-muted py-4">Chưa có nhà xuất bản nào.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="mt-3">{{ $publishers->links() }}</div>
+<div class="shop-box overflow-hidden simple-list">
+    @forelse ($publishers as $publisher)
+        <a href="{{ route('publishers.show', $publisher) }}" class="item">
+            <span class="rounded bg-light border d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px">
+                <i class="bi bi-building text-secondary"></i>
+            </span>
+            <span class="flex-grow-1 min-w-0">
+                <span class="d-block fw-semibold">{{ $publisher->name }}</span>
+                @if ($publisher->address)
+                    <span class="d-block meta text-truncate"><i class="bi bi-geo-alt"></i> {{ $publisher->address }}</span>
+                @endif
+            </span>
+            <span class="count-pill">{{ $publisher->books_count }} sách</span>
+            <i class="bi bi-chevron-right text-muted"></i>
+        </a>
+    @empty
+        <div class="text-center text-muted py-5">Chưa có nhà xuất bản nào.</div>
+    @endforelse
 </div>
+
+<div class="mt-4 d-flex justify-content-center">{{ $publishers->links() }}</div>
 @endsection

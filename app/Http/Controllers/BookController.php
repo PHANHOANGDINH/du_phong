@@ -27,7 +27,7 @@ class BookController extends Controller
 
         $books = Book::with(['publisher', 'authors', 'categories'])
             ->filter($filters)
-            ->paginate(10)
+            ->paginate(12) // lưới 4 cột x 3 hàng
             ->withQueryString();
 
         return view('books.index', $this->formOptions() + compact('books', 'filters'));
@@ -77,7 +77,15 @@ class BookController extends Controller
     {
         $book->load(['publisher', 'authors', 'categories']);
 
-        return view('books.show', compact('book'));
+        // Sách liên quan: cùng ít nhất một thể loại
+        $related = Book::with('authors')
+            ->whereKeyNot($book->id)
+            ->whereHas('categories', fn ($q) => $q->whereKey($book->categories->modelKeys()))
+            ->latest('id')
+            ->limit(10)
+            ->get();
+
+        return view('books.show', compact('book', 'related'));
     }
 
     /**

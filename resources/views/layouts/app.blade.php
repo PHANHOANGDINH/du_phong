@@ -77,7 +77,9 @@
         .tile:hover { border-color: #c7cbd1; }
 
         /* Dải sách liên quan */
-        .related-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(170px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 6px; }
+        /* Khung chọn trong form (tác giả, thể loại): cùng chiều cao, danh sách bên trong cuộn khi dài */
+        .pick-box { height: 340px; display: flex; flex-direction: column; }
+        .pick-box .pick-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 4px; }
     </style>
 </head>
 <body>

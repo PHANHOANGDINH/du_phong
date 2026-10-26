@@ -97,9 +97,10 @@
     {{-- Sách liên quan --}}
     @if ($related->isNotEmpty())
         <h2 class="h5 fw-bold text-center my-4">Sản phẩm liên quan</h2>
-        <div class="related-row">
+        {{-- Cột cố định theo màn hình: ít sách thì thẻ vẫn giữ kích thước, không bị kéo dãn --}}
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-xl-6 g-3">
             @foreach ($related as $item)
-                @include('books.partials.book-card', ['book' => $item])
+                <div class="col">@include('books.partials.book-card', ['book' => $item])</div>
             @endforeach
         </div>
     @endif

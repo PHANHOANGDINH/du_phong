@@ -74,9 +74,9 @@ Biến: $book, $publishers, $authors, $categories
 
     <div class="col-md-6">
         <label class="form-label">Tác giả <span class="text-danger">*</span> <span class="text-muted small">(chọn nhiều)</span></label>
-        <div class="border rounded p-2 @error('author_ids') border-danger @enderror @error('author_ids.*') border-danger @enderror">
+        <div class="border rounded p-2 pick-box @error('author_ids') border-danger @enderror @error('author_ids.*') border-danger @enderror">
             <input type="search" class="form-control form-control-sm mb-2" placeholder="Tìm tác giả..." oninput="filterChecklist(this, 'form-author-list')" aria-label="Tìm tác giả">
-            <div class="filter-scroll" id="form-author-list">
+            <div class="pick-list" id="form-author-list">
                 {{-- Tác giả đã chọn đưa lên đầu --}}
                 @foreach ($authors->sortBy(fn ($a) => in_array($a->id, $selectedAuthors) ? 0 : 1, SORT_REGULAR) as $author)
                     <div class="form-check" data-name="{{ mb_strtolower($author->name) }}">
@@ -91,15 +91,17 @@ Biến: $book, $publishers, $authors, $categories
         @error('author_ids.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-6">
-        <label class="form-label">Thể loại <span class="text-danger">*</span></label>
-        <div class="border rounded p-2 @error('category_ids') border-danger @enderror @error('category_ids.*') border-danger @enderror">
-            @foreach ($categories as $category)
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="category_ids[]" value="{{ $category->id }}"
-                           id="cat{{ $category->id }}" @checked(in_array($category->id, $selectedCategories))>
-                    <label class="form-check-label" for="cat{{ $category->id }}">{{ $category->name }}</label>
-                </div>
-            @endforeach
+        <label class="form-label">Thể loại <span class="text-danger">*</span> <span class="text-muted small">(chọn nhiều)</span></label>
+        <div class="border rounded p-2 pick-box @error('category_ids') border-danger @enderror @error('category_ids.*') border-danger @enderror">
+            <div class="pick-list">
+                @foreach ($categories as $category)
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="category_ids[]" value="{{ $category->id }}"
+                               id="cat{{ $category->id }}" @checked(in_array($category->id, $selectedCategories))>
+                        <label class="form-check-label" for="cat{{ $category->id }}">{{ $category->name }}</label>
+                    </div>
+                @endforeach
+            </div>
         </div>
         @error('category_ids') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
         @error('category_ids.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror

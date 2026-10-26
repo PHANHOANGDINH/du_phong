@@ -82,7 +82,7 @@ class BookController extends Controller
             ->whereKeyNot($book->id)
             ->whereHas('categories', fn ($q) => $q->whereKey($book->categories->modelKeys()))
             ->latest('id')
-            ->limit(10)
+            ->limit(6) // vừa một hàng trên màn hình rộng
             ->get();
 
         return view('books.show', compact('book', 'related'));
